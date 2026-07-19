@@ -1,0 +1,10 @@
+shiny>=1.2.0
+numpy>=1.24
+pandas>=2.0
+scipy>=1.10
+matplotlib>=3.7
+scikit-learn==1.7.2
+lifelines>=0.30
+scikit-survival>=0.22
+requests>=2.31
+optuna>=3.4
