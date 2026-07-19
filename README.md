@@ -91,21 +91,21 @@ All figures below are rendered from `tcga_luad_app_bundle.pkl`. No raw clinical 
 
 #### Discrimination and prediction error
 
-Panel A compares apparent training C-index with held-out test C-index and its bootstrap interval. Panel B shows the IPCW-corrected test Brier score over time, including a Kaplan-Meier null prediction. Panel C shows held-out cumulative/dynamic AUC.
+Panel A compares apparent training C-index with held-out test C-index and its bootstrap interval. Panel B compares train/test integrated Brier scores. Panel C shows the IPCW-corrected test Brier score over time, including a Kaplan-Meier null prediction. Panel D shows held-out cumulative/dynamic AUC.
 
-![Train and test concordance, test Brier score, and time-dependent AUC](assets/model_performance.png)
+![Train and test concordance and integrated Brier score with test Brier score and time-dependent AUC](assets/model_performance.png)
 
 #### Time-specific calibration
 
-Predicted survival is compared with Kaplan-Meier observed survival across five test-set risk groups at 12, 24, 36, and 60 months. These curves are descriptive: the test set contains 102 patients, and sparse late follow-up makes the 60-month estimates especially unstable.
+Predicted mortality risk is compared with Kaplan-Meier observed risk across five test-set risk groups at 12, 24, 36, and 60 months. These curves are descriptive: the test set contains 102 patients, and sparse late follow-up makes the 60-month estimates especially unstable.
 
 ![Cox PH and Log-Logistic AFT calibration at four survival horizons](assets/model_calibration.png)
 
 #### Parametric distribution selection
 
-The training-set Kaplan-Meier curve is compared with four marginal parametric survival distributions. Log-Logistic had the lowest AIC (1579.1) and was therefore used for the covariate-adjusted AFT model.
+Panel A compares the training-set Kaplan-Meier curve with four marginal parametric survival distributions. Panel B shows each candidate's AIC difference from the best fit. Log-Logistic had the lowest AIC (1579.1) and was therefore used for the covariate-adjusted AFT model.
 
-![Kaplan-Meier curve and fitted parametric survival distributions](assets/marginal_survival_fit.png)
+![Kaplan-Meier curve, fitted parametric survival distributions, and AIC comparison](assets/marginal_survival_fit.png)
 
 ## Run locally
 
