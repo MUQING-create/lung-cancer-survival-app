@@ -7,6 +7,10 @@ An interactive [Shiny for Python](https://shiny.posit.co/py/) dashboard for tran
 > [!WARNING]
 > This project is intended for research, education, and software demonstration only. It is not a medical device, has not been externally validated, and must not be used to guide treatment or estimate prognosis for an individual patient.
 
+## Application preview
+
+![Lung cancer survival dashboard](assets/lung_cancer_app.png)
+
 ## Overview
 
 The application uses publicly available clinical data from the [TCGA Lung Adenocarcinoma project](https://portal.gdc.cancer.gov/projects/TCGA-LUAD), obtained through the NCI Genomic Data Commons API. The checked-in model bundle contains 509 evaluable patients, with an overall-survival event rate of 36% and median observed follow-up of 21.6 months.
@@ -44,7 +48,7 @@ TCGA-LUAD clinical survival data (n = 509)
           +--------------+--------------+
                          |
        Train apparent performance + held-out test
-        C-index, IBS, dynamic AUC, and calibration
+             C-index, IBS, and dynamic AUC
                          |
        Saved bundle -> Shiny survival dashboard
 ```
@@ -94,12 +98,6 @@ All figures below are rendered from `tcga_luad_app_bundle.pkl`. No raw clinical 
 Panel A compares apparent training C-index with held-out test C-index and its bootstrap interval. Panel B compares train/test integrated Brier scores. Panel C shows held-out cumulative/dynamic AUC. The time-specific Brier score curve is intentionally omitted.
 
 ![Train and test concordance, integrated Brier score, and time-dependent AUC](assets/model_performance.png)
-
-#### Time-specific calibration
-
-Predicted mortality risk is compared with Kaplan-Meier observed risk across five test-set risk groups at 12, 24, 36, and 60 months. These curves are descriptive: the test set contains 102 patients, and sparse late follow-up makes the 60-month estimates especially unstable.
-
-![Cox PH and Log-Logistic AFT calibration at four survival horizons](assets/model_calibration.png)
 
 #### Parametric distribution selection
 
@@ -178,7 +176,7 @@ Do not replace the deployment bundle with raw patient-level feature tables.
 |-- survival_app.py                # Data handling, UI, server, and figures
 |-- survival_core.py               # Survival models and evaluation helpers
 |-- tcga_luad_app_bundle.pkl       # Sanitized model and evaluation bundle
-|-- assets/                        # Model evaluation figures for this README
+|-- assets/                        # App preview and model figures for this README
 |-- requirements.txt               # Runtime dependencies
 |-- deploy.py                      # shinyapps.io deployment helper
 |-- Dockerfile                     # Container definition
@@ -189,7 +187,7 @@ Do not replace the deployment bundle with raw patient-level feature tables.
 ## Limitations
 
 - This is a retrospective analysis of one public cancer cohort and has no external, temporal, or prospective validation.
-- The held-out test set contains only 102 patients, producing wide C-index intervals and unstable late-horizon calibration estimates.
+- The held-out test set contains only 102 patients, producing wide C-index intervals and limited precision for late-horizon estimates.
 - Only five routinely recorded clinical predictors are used; treatment, molecular, imaging, comorbidity, and performance-status information are not included.
 - Proportional-hazards assumptions and parametric extrapolation assumptions require further validation before any clinical use.
 - The single fixed split does not quantify the full variability of model development and selection.
