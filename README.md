@@ -17,7 +17,7 @@ The dashboard provides:
 - predicted survival probabilities at clinically interpretable time points;
 - train/test C-index and Integrated Brier Score comparisons;
 - test-set bootstrap confidence intervals for C-index;
-- test-set Brier score and cumulative/dynamic AUC over time;
+- test-set cumulative/dynamic AUC over time;
 - marginal survival-distribution comparison by AIC;
 - cohort stage summaries and a global visitor map; and
 - a deployment-safe precomputed bundle without raw clinical feature tables.
@@ -91,9 +91,9 @@ All figures below are rendered from `tcga_luad_app_bundle.pkl`. No raw clinical 
 
 #### Discrimination and prediction error
 
-Panel A compares apparent training C-index with held-out test C-index and its bootstrap interval. Panel B compares train/test integrated Brier scores. Panel C shows the IPCW-corrected test Brier score over time, including a Kaplan-Meier null prediction. Panel D shows held-out cumulative/dynamic AUC.
+Panel A compares apparent training C-index with held-out test C-index and its bootstrap interval. Panel B compares train/test integrated Brier scores. Panel C shows held-out cumulative/dynamic AUC. The time-specific Brier score curve is intentionally omitted.
 
-![Train and test concordance and integrated Brier score with test Brier score and time-dependent AUC](assets/model_performance.png)
+![Train and test concordance, integrated Brier score, and time-dependent AUC](assets/model_performance.png)
 
 #### Time-specific calibration
 
@@ -103,9 +103,9 @@ Predicted mortality risk is compared with Kaplan-Meier observed risk across five
 
 #### Parametric distribution selection
 
-Panel A compares the training-set Kaplan-Meier curve with four marginal parametric survival distributions. Panel B shows each candidate's AIC difference from the best fit. Log-Logistic had the lowest AIC (1579.1) and was therefore used for the covariate-adjusted AFT model.
+The training-set Kaplan-Meier curve is compared with four marginal parametric survival distributions. Log-Logistic had the lowest AIC (1579.1) and was therefore used for the covariate-adjusted AFT model. Exact AIC and BIC values remain available in the application table.
 
-![Kaplan-Meier curve, fitted parametric survival distributions, and AIC comparison](assets/marginal_survival_fit.png)
+![Kaplan-Meier curve and fitted parametric survival distributions](assets/marginal_survival_fit.png)
 
 ## Run locally
 

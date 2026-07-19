@@ -1737,17 +1737,17 @@ def server(input, output, session):
 </div>
 """)
 
-    # ── Model performance plot (static, 3-panel) ──────────────────────────────
+    # ── Model performance plot (static, 2-panel) ──────────────────────────────
 
     def _make_perf_plot(is_narrow: bool):
         if is_narrow:
-            fig = plt.figure(figsize=(3.5, 7.0), dpi=300)
-            gs = fig.add_gridspec(3, 1, hspace=0.78)
-            axs = [fig.add_subplot(gs[i, 0]) for i in range(3)]
+            fig = plt.figure(figsize=(3.5, 5.0), dpi=300)
+            gs = fig.add_gridspec(2, 1, hspace=0.70)
+            axs = [fig.add_subplot(gs[i, 0]) for i in range(2)]
         else:
             fig = plt.figure(figsize=(7.0, 3.5), dpi=300)
-            gs = fig.add_gridspec(1, 3, wspace=0.48)
-            axs = [fig.add_subplot(gs[0, i]) for i in range(3)]
+            gs = fig.add_gridspec(1, 2, wspace=0.42)
+            axs = [fig.add_subplot(gs[0, i]) for i in range(2)]
 
         for ax in axs:
             _cell_ax(fig, ax)
@@ -1782,43 +1782,8 @@ def server(input, output, session):
                      fontsize=10.0, pad=6)
         ax.tick_params(axis="y", pad=3)
 
-        # ── B: Brier score over time ──────────────────────────────────────────
+        # ── B: Time-dependent AUC ─────────────────────────────────────────────
         ax = axs[1]
-        brier_max = 0.0
-        for res, clr, nm in [
-            (RES_COX, _COX_CLR, "Cox"),
-            (RES_AFT, _AFT_CLR, "AFT"),
-        ]:
-            try:
-                t_arr = np.array(res["times"])
-                _, bs = _brier_score(_Y_TR, _Y_TE, res["surv_mat"], t_arr)
-                brier_max = max(brier_max, float(np.nanmax(bs)))
-                ax.plot(t_arr, bs, color=clr, lw=1.1, marker="o", ms=4,
-                        label=f"{nm} IBS={res['ibs']:.3f}")
-            except Exception:
-                pass
-
-        # KM null model (use COX result times as reference)
-        try:
-            null_t = np.array(NULL_BRIER.get("times", []), dtype=float)
-            null_bs = np.array(NULL_BRIER.get("values", []), dtype=float)
-            if len(null_t) and len(null_bs):
-                brier_max = max(brier_max, float(np.nanmax(null_bs)))
-                ax.plot(null_t, null_bs, color=_MUTED, lw=1.0, ls=":",
-                        label="Null")
-        except Exception:
-            pass
-
-        ax.set_ylim(0.08, max(0.28, brier_max + 0.025))
-        ax.set_xlabel("Time (months)", labelpad=5)
-        ax.set_ylabel("Brier Score", labelpad=2)
-        ax.set_title("B. Brier score", fontweight="bold",
-                     loc="left", fontsize=10.0, pad=6)
-        ax.legend(fontsize=8.0, frameon=False, loc="upper left",
-                  handlelength=2.2, borderaxespad=0.2)
-
-        # ── C: Time-dependent AUC ─────────────────────────────────────────────
-        ax = axs[2]
         auc_min = 1.0
         auc_max = 0.5
         for res, clr, nm in [
@@ -1837,17 +1802,17 @@ def server(input, output, session):
         ax.set_ylim(max(0.45, auc_min - 0.08), min(1.0, auc_max + 0.10))
         ax.set_xlabel("Time (months)", labelpad=5)
         ax.set_ylabel("Dynamic AUC", labelpad=2)
-        ax.set_title("C. Time-dependent AUC", fontweight="bold",
+        ax.set_title("B. Time-dependent AUC", fontweight="bold",
                      loc="left", fontsize=10.0, pad=6)
         ax.legend(fontsize=8.0, frameon=False, loc="lower right",
                   handlelength=2.2, borderaxespad=0.2)
         if is_narrow:
             fig.subplots_adjust(
-                left=0.22, right=0.95, top=0.97, bottom=0.07, hspace=0.78,
+                left=0.22, right=0.95, top=0.97, bottom=0.09, hspace=0.70,
             )
         else:
             fig.subplots_adjust(
-                left=0.085, right=0.985, top=0.90, bottom=0.18, wspace=0.48,
+                left=0.095, right=0.985, top=0.90, bottom=0.18, wspace=0.42,
             )
 
         return fig
@@ -1866,14 +1831,14 @@ def server(input, output, session):
     def perf_plot_desktop():
         return _figure_tag(
             _make_perf_plot(False),
-            "Train and test model performance comparison",
+            "C-index and time-dependent AUC model performance comparison",
         )
 
     @render.ui
     def perf_plot_mobile():
         return _figure_tag(
             _make_perf_plot(True),
-            "Train and test model performance comparison",
+            "C-index and time-dependent AUC model performance comparison",
         )
 
     # ── Performance metric chips ──────────────────────────────────────────────
