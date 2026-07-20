@@ -91,7 +91,7 @@ Test C-index confidence intervals use 150 bootstrap resamples. Integrated Brier 
 
 ### Model evaluation figures
 
-All figures below are rendered from `tcga_luad_app_bundle.pkl`. No raw clinical feature records are required to reproduce them.
+All figures below are rendered from `tcga_luad_app_bundle.pkl`. No raw clinical feature records are required to reproduce them. They use the shared Cell red/blue/teal palette with navy typography and can be regenerated with `python generate_readme_figures.py`.
 
 #### Discrimination and prediction error
 
@@ -175,6 +175,7 @@ Do not replace the deployment bundle with raw patient-level feature tables.
 |-- app.py                         # Minimal Shiny entry point
 |-- survival_app.py                # Data handling, UI, server, and figures
 |-- survival_core.py               # Survival models and evaluation helpers
+|-- generate_readme_figures.py     # Reproducible README figure generator
 |-- tcga_luad_app_bundle.pkl       # Sanitized model and evaluation bundle
 |-- assets/                        # App preview and model figures for this README
 |-- requirements.txt               # Runtime dependencies

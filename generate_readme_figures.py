@@ -32,6 +32,24 @@ CELL_COLORS = [
     "#8491B4", "#91D1C2", "#DC0000", "#7E6148", "#B09C85",
 ]
 
+PRIMARY_COLOR = CELL_COLORS[0]
+SECONDARY_COLOR = CELL_COLORS[1]
+TERTIARY_COLOR = CELL_COLORS[2]
+TEXT_COLOR = CELL_COLORS[3]
+WARNING_COLOR = CELL_COLORS[4]
+REFERENCE_COLOR = CELL_COLORS[9]
+FIT_COLORS = [SECONDARY_COLOR, TERTIARY_COLOR, TEXT_COLOR, WARNING_COLOR]
+
+mpl.rcParams.update({
+    "text.color": TEXT_COLOR,
+    "axes.labelcolor": TEXT_COLOR,
+    "axes.edgecolor": TEXT_COLOR,
+    "xtick.color": TEXT_COLOR,
+    "ytick.color": TEXT_COLOR,
+    "figure.facecolor": "white",
+    "axes.facecolor": "white",
+})
+
 ROOT = Path(__file__).resolve().parent
 BUNDLE_PATH = ROOT / "tcga_luad_app_bundle.pkl"
 ASSET_DIR = ROOT / "assets"
@@ -45,15 +63,20 @@ def _load_bundle() -> dict:
 def _style_axis(ax) -> None:
     for spine in ("top", "right", "bottom", "left"):
         ax.spines[spine].set_visible(True)
+        ax.spines[spine].set_color(TEXT_COLOR)
         ax.spines[spine].set_linewidth(0.8)
-    ax.tick_params(direction="out", length=3, width=0.8)
+    ax.tick_params(
+        direction="out",
+        length=3,
+        width=0.8,
+        colors=TEXT_COLOR,
+    )
     ax.grid(False)
 
 
 def _save_figure(fig, filename: str) -> None:
     ASSET_DIR.mkdir(parents=True, exist_ok=True)
-    plt.figure(fig.number)
-    plt.tight_layout()
+    fig.tight_layout()
     fig.savefig(ASSET_DIR / filename, format="png", dpi=300)
     plt.close(fig)
 
@@ -62,13 +85,13 @@ def _model_performance_figure(bundle: dict) -> None:
     model_rows = [
         {
             "name": "Cox PH",
-            "color": CELL_COLORS[0],
+            "color": PRIMARY_COLOR,
             "train": bundle["tr_cox"],
             "test": bundle["res_cox"],
         },
         {
             "name": f"{bundle['dist']['best']} AFT",
-            "color": CELL_COLORS[1],
+            "color": SECONDARY_COLOR,
             "train": bundle["tr_aft"],
             "test": bundle["res_aft"],
         },
@@ -80,7 +103,7 @@ def _model_performance_figure(bundle: dict) -> None:
 
     ax = axes[0]
     y_positions = np.arange(len(model_rows))[::-1]
-    ax.axvline(0.5, color=CELL_COLORS[9], linewidth=0.8, linestyle="--")
+    ax.axvline(0.5, color=REFERENCE_COLOR, linewidth=0.8, linestyle="--")
     for y_pos, row in zip(y_positions, model_rows):
         test = row["test"]
         test_value = float(test["c_index"])
@@ -139,7 +162,7 @@ def _model_performance_figure(bundle: dict) -> None:
         ax.plot(
             [train_value, test_value],
             [y_pos + 0.10, y_pos - 0.10],
-            color=CELL_COLORS[9],
+            color=REFERENCE_COLOR,
             linewidth=1.0,
         )
         ax.plot(
@@ -210,7 +233,7 @@ def _model_performance_figure(bundle: dict) -> None:
             fontsize=6.4,
             color=row["color"],
         )
-    ax.axhline(0.5, color=CELL_COLORS[9], linewidth=0.8, linestyle="--")
+    ax.axhline(0.5, color=REFERENCE_COLOR, linewidth=0.8, linestyle="--")
     ax.set_xlim(10, 67)
     ax.set_xticks([12, 24, 36, 48, 60])
     ax.set_ylim(0.48, 0.84)
@@ -244,13 +267,13 @@ def _marginal_survival_figure(bundle: dict) -> None:
         km_curve.index.to_numpy(dtype=float),
         km_curve.to_numpy(dtype=float),
         where="post",
-        color=CELL_COLORS[0],
+        color=PRIMARY_COLOR,
         linewidth=1.0,
         label="Kaplan-Meier",
     )
 
     line_styles = ["-", "--", "-.", ":"]
-    for index, (name, line_style) in enumerate(zip(ordered_names, line_styles), start=1):
+    for index, (name, line_style) in enumerate(zip(ordered_names, line_styles)):
         survival = np.asarray(
             fitters[name].survival_function_at_times(time_grid),
             dtype=float,
@@ -259,7 +282,7 @@ def _marginal_survival_figure(bundle: dict) -> None:
         ax.plot(
             time_grid,
             survival,
-            color=CELL_COLORS[index],
+            color=FIT_COLORS[index],
             linewidth=1.0,
             linestyle=line_style,
             label=label,
@@ -279,7 +302,7 @@ def main() -> None:
     bundle = _load_bundle()
     _model_performance_figure(bundle)
     _marginal_survival_figure(bundle)
-    print("README figures regenerated.")
+    print("README figures regenerated with the shared Cell color system.")
 
 
 if __name__ == "__main__":
